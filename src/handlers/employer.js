@@ -1,3 +1,5 @@
+const { adminId } = require('../../config/config')
+
 /* eslint-disable no-case-declarations */
 function startEmployerLogic (bot, ctx) {
   ctx.reply('You selected "Create Vacancy". Let\'s start by entering the job details.')
@@ -49,14 +51,33 @@ function startEmployerLogic (bot, ctx) {
       case 'contacts':
         vacancy.contacts = ctx.message.text
         // All fields are filled, display the job vacancy summary
-        const summary = `Job Vacancy Summary:\n\nCity: ${vacancy.city}\nPosition: ${vacancy.position}\nSalary: ${vacancy.salary}\nCompany: ${vacancy.company}\nRequirements: ${vacancy.requirements}\nDuties: ${vacancy.duties}\nContacts: ${vacancy.contacts}`
-        ctx.reply(summary)
+        const summary = `City: ${vacancy.city}\nPosition: ${vacancy.position}\nSalary: ${vacancy.salary}\nCompany: ${vacancy.company}\nRequirements: ${vacancy.requirements}\nDuties: ${vacancy.duties}\nContacts: ${vacancy.contacts}`
+        sendToAdmin(summary)
         // Set the flag to stop listening
         isContinueListening = false
         break
       default:
         ctx.reply('Please enter valid information.')
         break
+    }
+  }
+
+  const sendToAdmin = async (message) => {
+    const adminUserId = adminId
+    const userNickname = ctx.from.username
+
+    try {
+      // Forward the candidate message to the admin, including the user's nickname
+      await bot.telegram.sendMessage(
+        adminUserId,
+          `New job vacancy from @${userNickname}:\n${message}`
+      )
+
+      // Provide a confirmation to the user
+      await ctx.reply('Your message has been sent.')
+    } catch (error) {
+      console.error(error)
+      await ctx.reply('An error occurred while forwarding your message to the admin.')
     }
   }
 

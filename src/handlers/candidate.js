@@ -52,24 +52,21 @@ function startCandidateLogic (bot, ctx) {
 
   const sendToAdmin = async (message) => {
     const adminUserId = adminId
-    const userId = ctx.from.id
 
-    if (ctx.from.id === userId) {
-      const userNickname = ctx.from.username
+    const userNickname = ctx.from.username
 
-      try {
-        // Forward the candidate message to the admin, including the user's nickname
-        await bot.telegram.sendMessage(
-          adminUserId,
+    try {
+      // Forward the candidate message to the admin, including the user's nickname
+      await bot.telegram.sendMessage(
+        adminUserId,
           `New candidate @${userNickname}:\n${message}`
-        )
+      )
 
-        // Provide a confirmation to the user
-        await ctx.reply('Your message has been sent.')
-      } catch (error) {
-        console.error(error)
-        await ctx.reply('An error occurred while forwarding your message to the admin.')
-      }
+      // Provide a confirmation to the user
+      await ctx.reply('Your message has been sent.')
+    } catch (error) {
+      console.error(error)
+      await ctx.reply('An error occurred while forwarding your message to the admin.')
     }
   }
 
